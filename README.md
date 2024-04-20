@@ -9,4 +9,5 @@ This is used to access the DB.
 
 Things completed:
 - Added validation
+- SImple REST CRUD API using Array 
 
