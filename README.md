@@ -7,3 +7,6 @@
 OPerations are done here.
 This is used to access the DB.
 
+Things completed:
+- Added validation
+
