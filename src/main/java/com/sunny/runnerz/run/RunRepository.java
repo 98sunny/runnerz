@@ -18,7 +18,21 @@ public class RunRepository {
         return runs;
     }
 
-//   A container object which may or may not contain a non-null value. If a value is present, isPresent() returns true.
+    void create(Run run) {
+        System.out.println("Value of runs:" + runs);
+        runs.add(run);
+    }
+    void update(Run run, Integer id){
+        Optional<Run> existingRunById = findById(id);
+        if(existingRunById.isPresent()) {
+            runs.set(runs.indexOf(existingRunById.get()),run);
+        }
+    }
+    void delete(Integer id) {
+            runs.removeIf(run -> run.id() == id);
+    }
+
+//   OPtional: A container object which may or may not contain a non-null value. If a value is present, isPresent() returns true.
 //   If no value is present, the object is considered empty and isPresent() returns false.
     Optional<Run> findById(Integer id) {
         return runs.stream()

@@ -1,8 +1,7 @@
 package com.sunny.runnerz.run;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.text.html.Option;
@@ -10,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/runs")
 public class RunController {
     private final RunRepository runRepository;
 
@@ -21,18 +21,36 @@ public class RunController {
         return "Hello Runnerz!!";
     }
 
-    @GetMapping("/api/runs")
+    @GetMapping("")
     List<Run> findAll() {
         System.out.println(runRepository.findAll());
         return runRepository.findAll();
     }
-    @GetMapping("/api/runs/{id}")
+    @GetMapping("/{id}")
     Optional<Run> findById(@PathVariable int id) {
 
         Optional<Run> runById= runRepository.findById(id);
         if(!runById.isPresent()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Run not found");
+            throw new RunNotFoundException();
         }
         return Optional.of(runById.get());
     }
+//post method
+    @PostMapping("/create")
+    @ResponseStatus(HttpStatus.CREATED)
+    void create(@Valid @RequestBody Run run) {
+        runRepository.create(run);
+    }
+
+    //update method
+    @PutMapping("/update/{id}")
+    void update(@RequestBody Run run, @PathVariable int id){
+        runRepository.update(run, id);
+    }
+    //delete method
+    @DeleteMapping("/delete/{id}")
+    void delete(@PathVariable int id) {
+        runRepository.delete(id);
+    }
 }
+
