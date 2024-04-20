@@ -9,13 +9,15 @@ public class Runn {
     LocalDateTime startedOn;
     LocalDateTime completedOn;
     Integer miles;
+    Location location;
 
-    public Runn(Integer id, String title, LocalDateTime startedOn, LocalDateTime completedOn, Integer miles) {
+    public Runn(Integer id, String title, LocalDateTime startedOn, LocalDateTime completedOn, Integer miles, Location location) {
         this.id = id;
         this.title = title;
         this.startedOn = startedOn;
         this.completedOn = completedOn;
         this.miles = miles;
+        this.location = location;
         if(completedOn.isAfter(startedOn)){
             throw new IllegalArgumentException("Compled on date must be after started on date");
         }
