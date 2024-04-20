@@ -2,6 +2,7 @@ package com.sunny.runnerz;
 
 import com.sunny.runnerz.run.Location;
 import com.sunny.runnerz.run.Run;
+import com.sunny.runnerz.run.RunRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -20,10 +21,13 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
+
+//	this function runs when the application starts. @Bean is a spring annotation which is used to create beans.
 //	@Bean
-//	CommandLineRunner runner(){
+//	CommandLineRunner runner(RunRepository runRepository) {
 //		return args -> {
-//			Run run=new Run(1, "Run 1", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 100, Location.outdoor);
+//			Run run=new Run(2, "Run in the evening", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 100, Location.outdoor);
+//			runRepository.create(run);
 //
 //			log.info("Run:"+run);
 //		};

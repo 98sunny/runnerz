@@ -1,7 +1,11 @@
 package com.sunny.runnerz.run;
 
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -10,41 +14,69 @@ import java.util.Optional;
 
 @Repository
 public class RunRepository {
-    private List<Run> runs=new ArrayList<>();
-
-
-    List<Run> findAll(){
-        System.out.println("Value of runs:"+runs);
-        return runs;
+    private static final Logger logger = LoggerFactory.getLogger(RunRepository.class);
+    private final JdbcClient jdbcClient;
+    public RunRepository(JdbcClient jdbcClient) {
+        this.jdbcClient = jdbcClient;
     }
 
-    void create(Run run) {
-        System.out.println("Value of runs:" + runs);
-        runs.add(run);
+    public List<Run> findAll() {
+        return jdbcClient.sql("select * from run")
+//                above query is run and return list of Run objects which is mapped to the Run class into the list.
+                .query(Run.class)
+                .list();
     }
-    void update(Run run, Integer id){
-        Optional<Run> existingRunById = findById(id);
-        if(existingRunById.isPresent()) {
-            runs.set(runs.indexOf(existingRunById.get()),run);
-        }
+    public Optional<Run> findById(int id){
+        System.out.println("id is" + id);
+        System.out.println(
+        jdbcClient.sql("select * from Run where id=:id")
+//                this is how we pass the parameter to the query.
+                .param("id",id)
+//                query is run and return optional object of the Run class.
+                .query(Run.class)
+//                returns the optional object of the Run class.
+                .optional()
+
+        );
+        return jdbcClient.sql("select * from Run where id=:id")
+//                this is how we pass the parameter to the query.
+                .param("id",id)
+//                query is run and return optional object of the Run class.
+                .query(Run.class)
+//                returns the optional object of the Run class.
+                .optional();
+
     }
-    void delete(Integer id) {
-            runs.removeIf(run -> run.id() == id);
+    public void create(Run run) {
+        var updated=jdbcClient.sql("insert into Run (id, title, started_on, completed_on, miles, location) values (?,?,?,?,?,?)")
+                .params(List.of(run.id(), run.title(), run.startedOn(), run.completedOn(), run.miles(), run.location().toString()))
+                .update();
+        Assert.state(updated == 1, "Failed to insert run" + run.title());
+//                (updated=1,"Failed to insert run"+run.title());
+    }
+    public void delete(int id) {
+        var updated = jdbcClient.sql("delete from Run where id=:id")
+                .params("id",id)
+                .update();
+        Assert.state(updated == 1, "Failed to delete run with id" + id);
+//                (updated=1,"Failed to delete run with id"+id);
+    }
+    public int count(){
+        return jdbcClient.sql("select count(*) from Run")
+                .query()
+                .listOfRows().size();
+    }
+    public void saveAll(List<Run> runs){
+        runs.stream().forEach(this::create);
     }
 
-//   OPtional: A container object which may or may not contain a non-null value. If a value is present, isPresent() returns true.
-//   If no value is present, the object is considered empty and isPresent() returns false.
-    Optional<Run> findById(Integer id) {
-        return runs.stream()
-                .filter(run -> run.id() == id)
-                .findFirst();
+    public List<Run> findByLocation(Location location) {
+        return jdbcClient.sql("select * from Run where location=:location")
+                .param("location", location)
+                .query(Run.class)
+                .list();
     }
 
-    //    PostConstruct does some initialization work before the instance is ready to be used.
-    @PostConstruct
-    public void init() {
-        runs.add(new Run(1, "Run 1", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 100, Location.outdoor));
-        runs.add(new Run(2, "Run 2", LocalDateTime.now(), LocalDateTime.now().plusDays(1), 100, Location.indoor));
-    }
+
 
 }

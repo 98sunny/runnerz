@@ -2,9 +2,6 @@ package com.sunny.runnerz.run;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,15 +39,15 @@ public class RunController {
         runRepository.create(run);
     }
 
-    //update method
-    @PutMapping("/update/{id}")
-    void update(@RequestBody Run run, @PathVariable int id){
-        runRepository.update(run, id);
-    }
-    //delete method
-    @DeleteMapping("/delete/{id}")
-    void delete(@PathVariable int id) {
-        runRepository.delete(id);
-    }
+//    //update method
+//    @PutMapping("/update/{id}")
+//    void update(@RequestBody Run run, @PathVariable int id){
+//        runRepository.update(run, id);
+//    }
+//    //delete method
+//    @DeleteMapping("/delete/{id}")
+//    void delete(@PathVariable int id) {
+//        runRepository.delete(id);
+//    }
 }
 

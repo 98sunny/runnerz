@@ -2,5 +2,7 @@ package com.sunny.runnerz.run;
 
 public enum Location {
     indoor,
-    outdoor
+    outdoor,
+    INDOOR,
+    OUTDOOR
 }
