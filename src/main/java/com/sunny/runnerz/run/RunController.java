@@ -10,47 +10,48 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/runs")
-public class RunController {
-    private final RunRepository runRepository;
+class RunController {
 
-    public RunController(RunRepository runRepository) {
-        this.runRepository=runRepository;
-    }
-    @GetMapping("/hello")
-    String home(){
-        return "Hello Runnerz!!";
+    private final JdbcRunRepository runRepository;
+
+    RunController(JdbcRunRepository runRepository) {
+        this.runRepository = runRepository;
     }
 
-    @GetMapping("")
+    @GetMapping
     List<Run> findAll() {
-        System.out.println(runRepository.findAll());
         return runRepository.findAll();
     }
-    @GetMapping("/{id}")
-    Optional<Run> findById(@PathVariable int id) {
 
-        Optional<Run> runById= runRepository.findById(id);
-        if(!runById.isPresent()){
-            throw new RunNotFoundException();
+    @GetMapping("/{id}")
+    Run findById(@PathVariable Integer id) {
+        Optional<Run> run = runRepository.findById(id);
+        if(run.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Run not found.");
         }
-        return Optional.of(runById.get());
+        return run.get();
     }
-//post method
-    @PostMapping("/create")
+
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
     void create(@Valid @RequestBody Run run) {
         runRepository.create(run);
     }
 
-    //update method
-    @PutMapping("/update/{id}")
-    void update(@RequestBody Run run, @PathVariable int id){
-        runRepository.update(run, id);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/{id}")
+    void update(@Valid @RequestBody Run run, @PathVariable Integer id) {
+        runRepository.update(run,id);
     }
-    //delete method
-    @DeleteMapping("/delete/{id}")
-    void delete(@PathVariable int id) {
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    void delete(@PathVariable Integer id) {
         runRepository.delete(id);
+    }
+
+    List<Run> findByLocation(@RequestParam String location) {
+        return runRepository.findByLocation(location);
     }
 }
 
